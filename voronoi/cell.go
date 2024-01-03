@@ -2,7 +2,7 @@
 // MIT License: See https://github.com/gorhill/Javascript-Voronoi/LICENSE.md
 
 // Author: Przemyslaw Szczepaniak (przeszczep@gmail.com)
-// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation 
+// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation
 // of Steven  Forune's algorithm to compute Voronoi diagrams
 
 package voronoi
@@ -31,7 +31,7 @@ func (t *Cell) prepare() int {
 	for ; iHalfedge >= 0; iHalfedge-- {
 		edge := halfedges[iHalfedge].Edge
 
-		if edge.Vb.Vertex == NO_VERTEX || edge.Va.Vertex == NO_VERTEX {
+		if edge.Vb.Vertex == NoVertex || edge.Va.Vertex == NoVertex {
 			halfedges[iHalfedge] = halfedges[len(halfedges)-1]
 			halfedges = halfedges[:len(halfedges)-1]
 		}

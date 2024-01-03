@@ -1,7 +1,7 @@
-// MIT License: See https://github.com/pzsz/voronoi/LICENSE.md
+// MIT License: See https://github.com/derekmu/voronoi/LICENSE.md
 
 // Author: Przemyslaw Szczepaniak (przeszczep@gmail.com)
-// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation 
+// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation
 // of Steven Forune's algorithm to compute Voronoi diagrams
 
 package voronoi
@@ -38,11 +38,11 @@ func (s *Voronoi) getCell(site Vertex) *Cell {
 func (s *Voronoi) createEdge(LeftCell, RightCell *Cell, va, vb Vertex) *Edge {
 	edge := newEdge(LeftCell, RightCell)
 	s.edges = append(s.edges, edge)
-	if va != NO_VERTEX {
+	if va != NoVertex {
 		s.setEdgeStartpoint(edge, LeftCell, RightCell, va)
 	}
 
-	if vb != NO_VERTEX {
+	if vb != NoVertex {
 		s.setEdgeEndpoint(edge, LeftCell, RightCell, vb)
 	}
 
@@ -64,7 +64,7 @@ func (s *Voronoi) createBorderEdge(LeftCell *Cell, va, vb Vertex) *Edge {
 }
 
 func (s *Voronoi) setEdgeStartpoint(edge *Edge, LeftCell, RightCell *Cell, vertex Vertex) {
-	if edge.Va.Vertex == NO_VERTEX && edge.Vb.Vertex == NO_VERTEX {
+	if edge.Va.Vertex == NoVertex && edge.Vb.Vertex == NoVertex {
 		edge.Va.Vertex = vertex
 		edge.LeftCell = LeftCell
 		edge.RightCell = RightCell
@@ -171,7 +171,7 @@ func (s *Voronoi) removeBeachsection(beachsection *Beachsection) {
 	previous := beachsection.node.previous
 	next := beachsection.node.next
 	disappearingTransitions := BeachsectionPtrs{beachsection}
-	abs_fn := math.Abs
+	absFn := math.Abs
 
 	// remove collapsed beachsection from beachline
 	s.detachBeachsection(beachsection)
@@ -188,8 +188,8 @@ func (s *Voronoi) removeBeachsection(beachsection *Beachsection) {
 	// look left
 	lArc := previous.value.(*Beachsection)
 	for lArc.circleEvent != nil &&
-		abs_fn(x-lArc.circleEvent.x) < 1e-9 &&
-		abs_fn(y-lArc.circleEvent.ycenter) < 1e-9 {
+		absFn(x-lArc.circleEvent.x) < 1e-9 &&
+		absFn(y-lArc.circleEvent.ycenter) < 1e-9 {
 
 		previous = lArc.node.previous
 		disappearingTransitions.appendLeft(lArc)
@@ -206,8 +206,8 @@ func (s *Voronoi) removeBeachsection(beachsection *Beachsection) {
 	// look right
 	var rArc = next.value.(*Beachsection)
 	for rArc.circleEvent != nil &&
-		abs_fn(x-rArc.circleEvent.x) < 1e-9 &&
-		abs_fn(y-rArc.circleEvent.ycenter) < 1e-9 {
+		absFn(x-rArc.circleEvent.x) < 1e-9 &&
+		absFn(y-rArc.circleEvent.ycenter) < 1e-9 {
 		next = rArc.node.next
 		disappearingTransitions.appendRight(rArc)
 		s.detachBeachsection(rArc) // mark for reuse
@@ -243,7 +243,7 @@ func (s *Voronoi) removeBeachsection(beachsection *Beachsection) {
 	lSite := s.getCell(lArc.site)
 	rSite := s.getCell(rArc.site)
 
-	rArc.edge = s.createEdge(lSite, rSite, NO_VERTEX, vertex)
+	rArc.edge = s.createEdge(lSite, rSite, NoVertex, vertex)
 
 	// create circle events if any for beach sections left in the beachline
 	// adjacent to collapsed sections
@@ -355,7 +355,7 @@ func (s *Voronoi) addBeachsection(site Vertex) {
 		// a new edge is born
 		lCell := s.getCell(lArc.site)
 		newCell := s.getCell(newArc.site)
-		newArc.edge = s.createEdge(lCell, newCell, NO_VERTEX, NO_VERTEX)
+		newArc.edge = s.createEdge(lCell, newCell, NoVertex, NoVertex)
 		rArc.edge = newArc.edge
 
 		// check whether the left and right beach sections are collapsing
@@ -378,7 +378,7 @@ func (s *Voronoi) addBeachsection(site Vertex) {
 	if lArc != nil && rArc == nil {
 		lCell := s.getCell(lArc.site)
 		newCell := s.getCell(newArc.site)
-		newArc.edge = s.createEdge(lCell, newCell, NO_VERTEX, NO_VERTEX)
+		newArc.edge = s.createEdge(lCell, newCell, NoVertex, NoVertex)
 		return
 	}
 
@@ -434,8 +434,8 @@ func (s *Voronoi) addBeachsection(site Vertex) {
 		s.setEdgeStartpoint(rArc.edge, lCell, rCell, vertex)
 
 		// two new transitions appear at the new vertex location
-		newArc.edge = s.createEdge(lCell, cell, NO_VERTEX, vertex)
-		rArc.edge = s.createEdge(cell, rCell, NO_VERTEX, vertex)
+		newArc.edge = s.createEdge(lCell, cell, NoVertex, vertex)
+		rArc.edge = s.createEdge(cell, rCell, NoVertex, vertex)
 
 		// check whether the left and right beach sections are collapsing
 		// and if so create circle events, to handle the point of collapse.
@@ -515,7 +515,7 @@ func (s *Voronoi) attachCircleEvent(arc *Beachsection) {
 	// Important: ybottom should always be under or at sweep, so no need
 	// to waste CPU cycles by checking
 
-	// recycle circle event object if possible	
+	// recycle circle event object if possible
 	circleEventInst := &circleEvent{
 		arc:     arc,
 		site:    cSite,
@@ -569,25 +569,24 @@ func (s *Voronoi) detachCircleEvent(arc *Beachsection) {
 	}
 }
 
-// Bounding Box
+// BBox is a bounding box.
 type BBox struct {
 	Xl, Xr, Yt, Yb float64
 }
 
-// Create new Bounding Box
 func NewBBox(xl, xr, yt, yb float64) BBox {
 	return BBox{xl, xr, yt, yb}
 }
 
-// connect dangling edges (not if a cursory test tells us
-// it is not going to be visible.
+// connect dangling edges (not if a cursory test tells us it is not going to be visible).
 // return value:
-//   false: the dangling endpoint couldn't be connected
-//   true: the dangling endpoint could be connected
+//
+//	false: the dangling endpoint couldn't be connected
+//	true: the dangling endpoint could be connected
 func connectEdge(edge *Edge, bbox BBox) bool {
 	// skip if end point already connected
 	vb := edge.Vb.Vertex
-	if vb != NO_VERTEX {
+	if vb != NoVertex {
 		return true
 	}
 
@@ -634,7 +633,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 		}
 		// downward
 		if lx > rx {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{fx, yt}
 			} else if va.Y >= yb {
 				return false
@@ -642,7 +641,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 			vb = Vertex{fx, yb}
 			// upward
 		} else {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{fx, yb}
 			} else if va.Y < yt {
 				return false
@@ -654,7 +653,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 	} else if fm < -1 || fm > 1 {
 		// downward
 		if lx > rx {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{(yt - fb) / fm, yt}
 			} else if va.Y >= yb {
 				return false
@@ -662,7 +661,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 			vb = Vertex{(yb - fb) / fm, yb}
 			// upward
 		} else {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{(yb - fb) / fm, yb}
 			} else if va.Y < yt {
 				return false
@@ -674,7 +673,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 	} else {
 		// rightward
 		if ly < ry {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{xl, fm*xl + fb}
 			} else if va.X >= xr {
 				return false
@@ -682,7 +681,7 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 			vb = Vertex{xr, fm*xr + fb}
 			// leftward
 		} else {
-			if va == NO_VERTEX {
+			if va == NoVertex {
 				va = Vertex{xr, fm*xr + fb}
 			} else if va.X < xl {
 				return false
@@ -696,8 +695,10 @@ func connectEdge(edge *Edge, bbox BBox) bool {
 }
 
 // line-clipping code taken from:
-//   Liang-Barsky function by Daniel White
-//   http://www.skytopia.com/project/articles/compsci/clipping.html
+//
+//	Liang-Barsky function by Daniel White
+//	http://www.skytopia.com/project/articles/compsci/clipping.html
+//
 // Thanks!
 // A bit modified to minimize code paths
 func clipEdge(edge *Edge, bbox BBox) bool {
@@ -768,7 +769,7 @@ func clipEdge(edge *Edge, bbox BBox) bool {
 			t0 = r
 		}
 	}
-	// bottom        
+	// bottom
 	q = bbox.Yb - ay
 	if dy == 0 && q < 0 {
 		return false
@@ -825,7 +826,7 @@ func greaterThanWithEpsilon(a, b float64) bool {
 func (s *Voronoi) clipEdges(bbox BBox) {
 	// connect all dangling edges to bounding box
 	// or get rid of them if it can't be done
-	abs_fn := math.Abs
+	absFn := math.Abs
 
 	// iterate backward so we can splice safely
 	for i := len(s.edges) - 1; i >= 0; i-- {
@@ -833,9 +834,9 @@ func (s *Voronoi) clipEdges(bbox BBox) {
 		// edge is removed if:
 		//   it is wholly outside the bounding box
 		//   it is actually a point rather than a line
-		if !connectEdge(edge, bbox) || !clipEdge(edge, bbox) || (abs_fn(edge.Va.X-edge.Vb.X) < 1e-9 && abs_fn(edge.Va.Y-edge.Vb.Y) < 1e-9) {
-			edge.Va.Vertex = NO_VERTEX
-			edge.Vb.Vertex = NO_VERTEX
+		if !connectEdge(edge, bbox) || !clipEdge(edge, bbox) || (absFn(edge.Va.X-edge.Vb.X) < 1e-9 && absFn(edge.Va.Y-edge.Vb.Y) < 1e-9) {
+			edge.Va.Vertex = NoVertex
+			edge.Vb.Vertex = NoVertex
 			s.edges[i] = s.edges[len(s.edges)-1]
 			s.edges = s.edges[0 : len(s.edges)-1]
 		}
@@ -850,7 +851,7 @@ func (s *Voronoi) closeCells(bbox BBox) {
 	yt := bbox.Yt
 	yb := bbox.Yb
 	cells := s.cells
-	abs_fn := math.Abs
+	absFn := math.Abs
 
 	for _, cell := range cells {
 		// trim non fully-defined halfedges and sort them counterclockwise
@@ -875,7 +876,7 @@ func (s *Voronoi) closeCells(bbox BBox) {
 			startpoint := halfedges[iRight].GetStartpoint()
 			// if end point is not equal to start point, we need to add the missing
 			// halfedge(s) to close the cell
-			if abs_fn(endpoint.X-startpoint.X) >= 1e-9 || abs_fn(endpoint.Y-startpoint.Y) >= 1e-9 {
+			if absFn(endpoint.X-startpoint.X) >= 1e-9 || absFn(endpoint.Y-startpoint.Y) >= 1e-9 {
 				// if we reach this point, cell needs to be closed by walking
 				// counterclockwise along the bounding box until it connects
 				// to next halfedge in the list
@@ -951,8 +952,8 @@ func (s *Voronoi) gatherVertexEdges() {
 	}
 }
 
-// Compute voronoi diagram. If closeCells == true, edges from bounding box will be 
-// included in diagram.
+// ComputeDiagram computes the voronoi diagram.
+// If closeCells == true, edges from bounding box will be included in diagram.
 func ComputeDiagram(sites []Vertex, bbox BBox, closeCells bool) *Diagram {
 	s := &Voronoi{
 		cellsMap: make(map[Vertex]*Cell),

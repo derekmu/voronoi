@@ -1,18 +1,18 @@
 # Voronoi diagrams in Go
 
-A Implementation of of Steven J. Fortune's algorithm to
-efficiently compute Voronoi diagrams in Go language. Based on 
-a Raymond Hill's javascript implementation 
-(https://raw.github.com/gorhill/Javascript-Voronoi).
+An implementation of Steven J. Fortune's algorithm to efficiently compute Voronoi diagrams in Go language.
+
+Based on Raymond Hill's javascript implementation: https://raw.github.com/gorhill/Javascript-Voronoi.
+
+Updated with a go.mod file, tagged versions, and stable versions per https://pkg.go.dev.
 
 ## Usage
 
-
-```
-import "github.com/pzsz/voronoi"
+```go
+import "github.com/derekmu/voronoi"
 
 func useVoronoi() {
-     	// Sites of voronoi diagram
+    // Sites of voronoi diagram
 	sites := []voronoi.Vertex{
 		voronoi.Vertex{4, 5},
 		voronoi.Vertex{6, 5},
@@ -24,7 +24,7 @@ func useVoronoi() {
 	bbox := NewBBox(0, 20, 0, 10)
 
 	// Compute diagram and close cells (add half edges from bounding box)
-	diagram := NewVoronoi().Compute(sites, bbox, true)
+	diagram := voronoi.ComputeDiagram(sites, bbox, true)
 
 	// Iterate over cells
 	for _, cell := diagram.Cells {

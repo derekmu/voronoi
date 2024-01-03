@@ -1,7 +1,7 @@
-// MIT License: See https://github.com/pzsz/voronoi/LICENSE.md
+// MIT License: See https://github.com/derekmu/voronoi/LICENSE.md
 
 // Author: Przemyslaw Szczepaniak (przeszczep@gmail.com)
-// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation 
+// Port of Raymond Hill's (rhill@raymondhill.net) javascript implementation
 // of Steven Forune's algorithm to compute Voronoi diagrams
 
 package voronoi
@@ -16,16 +16,16 @@ type Vertex struct {
 	Y float64
 }
 
-// Vertex representing lack of vertex (or bad vertex)
-var NO_VERTEX = Vertex{math.Inf(1), math.Inf(1)}
+// NoVertex representing lack of vertex (or bad vertex)
+var NoVertex = Vertex{math.Inf(1), math.Inf(1)}
 
-// For sort interface
+// Vertices for sort interface.
 type Vertices []Vertex
 
 func (s Vertices) Len() int      { return len(s) }
 func (s Vertices) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-// Used for sorting vertices along the Y axis
+// VerticesByY for sorting vertices along the Y axis.
 type VerticesByY struct{ Vertices }
 
 func (s VerticesByY) Less(i, j int) bool { return s.Vertices[i].Y < s.Vertices[j].Y }
@@ -62,26 +62,26 @@ func (e *Edge) GetOtherEdgeVertex(v Vertex) EdgeVertex {
 	} else if v == e.Vb.Vertex {
 		return e.Va
 	}
-	return EdgeVertex{NO_VERTEX, nil}
+	return EdgeVertex{NoVertex, nil}
 }
 
 func newEdge(LeftCell, RightCell *Cell) *Edge {
 	return &Edge{
 		LeftCell:  LeftCell,
 		RightCell: RightCell,
-		Va:        EdgeVertex{NO_VERTEX, nil},
-		Vb:        EdgeVertex{NO_VERTEX, nil},
+		Va:        EdgeVertex{NoVertex, nil},
+		Vb:        EdgeVertex{NoVertex, nil},
 	}
 }
 
-// Halfedge (directed edge)
+// Halfedge is a directed edge.
 type Halfedge struct {
 	Cell  *Cell
 	Edge  *Edge
 	Angle float64
 }
 
-// Sort interface for halfedges
+// Halfedges for sort interface.
 type Halfedges []*Halfedge
 
 func (s Halfedges) Len() int      { return len(s) }
