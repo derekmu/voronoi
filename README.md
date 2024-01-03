@@ -9,32 +9,38 @@ Updated with a go.mod file, tagged versions, and stable versions per https://pkg
 ## Usage
 
 ```go
-import "github.com/derekmu/voronoi"
+package main
 
-func useVoronoi() {
-    // Sites of voronoi diagram
+import (
+	"github.com/derekmu/voronoi"
+	"log"
+)
+
+func main() {
+	// Sites of voronoi diagram
 	sites := []voronoi.Vertex{
-		voronoi.Vertex{4, 5},
-		voronoi.Vertex{6, 5},
-		...
+		{X: 4, Y: 5},
+		{X: 6, Y: 5},
 	}
 
-	// Create bounding box of [0, 20] in X axis
-	// and [0, 10] in Y axis
-	bbox := NewBBox(0, 20, 0, 10)
+	// Create bounding box of [0, 20] in X axis and [0, 10] in Y axis
+	bbox := voronoi.NewBBox(0, 20, 0, 10)
 
 	// Compute diagram and close cells (add half edges from bounding box)
 	diagram := voronoi.ComputeDiagram(sites, bbox, true)
 
 	// Iterate over cells
-	for _, cell := diagram.Cells {
-		for _, hedge := cell.Halfedges {
-		    ...
-		}	
+	for i, cell := range diagram.Cells {
+		log.Printf("Cell #%d: %+v", i+1, cell.Site)
+		for j, hedge := range cell.Halfedges {
+			log.Printf("\tHalf Edge #%d: %+v", j+1, hedge)
+		}
 	}
 
-	// Iterate over all edges
-	for _, edge := diagram.Edge {
-	    ...
+	// Iterate over edges
+	for i, edge := range diagram.Edges {
+		log.Printf("Edge #%d: %+v", i+1, edge)
 	}
 }
+
+```
